@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Orbital Console • ISS Live</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+</head>
+<body>
+  <div id="bg"></div>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🛰️</span>
+      <div class="title">
+        <h1>Orbital Console</h1>
+        <p>Swiss Satellites • ISS Live</p>
+      </div>
+    </div>
+    <div class="actions">
+      <label class="field">
+        <span>Country</span>
+        <select id="countrySelect">
+          <option value="CH" selected>Switzerland</option>
+          <option value="TR">Turkey</option>
+          <option value="US">United States</option>
+          <option value="EU">European Union</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Search</span>
+        <input id="searchBox" type="search" placeholder="Name or NORAD ID">
+      </label>
+      <button id="helpBtn" class="ghost">?</button>
+    </div>
+  </header>
+  <main class="grid">
+    <aside class="panel">
+      <h2>Satellites of <span id="countryName">Switzerland</span></h2>
+      <ul id="satList" class="slist"></ul>
+      <div class="hint">
+        Click a satellite to open its info card on the right.
+      </div>
+    </aside>
+    <section class="globe" id="map"></section>
+    <aside class="panel">
+      <div class="tabs">
+        <button class="tab active" data-tab="tab-info">Satellite Info</button>
+        <button class="tab" data-tab="tab-iss">ISS Live</button>
+      </div>
+      <div id="tab-info" class="tabpane active">
+        <div id="satCard" class="card">
+          <h3>Choose a satellite</h3>
+          <p>Select a satellite from the left to see details here.</p>
+        </div>
+      </div>
+      <div id="tab-iss" class="tabpane">
+        <div class="card">
+          <h3>📺 NASA — ISS Live Camera</h3>
+          <div class="youtube">
+            <iframe id="ytFrame" src="" title="ISS Live"
+              frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
+              allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          </div>
+          <div id="issData"></div>
+          <small class="muted">
+            Browsers block autoplay with sound; click once to unmute.
+          </small>
+        </div>
+      </div>
+    </aside>
+  </main>
+  <div class="musicbar">
+    <div class="row">
+      <span>🎵 Background Music</span>
+      <div class="controls">
+        <button id="muteBtn" class="ghost">Mute</button>
+        <audio id="bgm" src="mymusic.mp3" loop></audio>
+      </div>
+    </div>
+    <small class="muted"></small>
+  </div>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.terminator/dist/leaflet.terminator.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
