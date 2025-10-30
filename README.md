@@ -1,4 +1,4 @@
-# AI Coding Agent Instructions for SatTrackApp
+# Coding Instructions for SatTrackApp
 
 ## Project Overview
 SatTrackApp is a web-based satellite tracking application that displays real-time positions of satellites from different countries, with special focus on the International Space Station (ISS). The app features a dynamic map interface, country-specific satellite filtering, and live ISS video feed.
