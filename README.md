@@ -1,4 +1,4 @@
-# Coding Instructions for SatTrackApp
+# AI Coding Agent Instructions for SatTrackApp
 
 ## Project Overview
 SatTrackApp is a web-based satellite tracking application that displays real-time positions of satellites from different countries, with special focus on the International Space Station (ISS). The app features a dynamic map interface, country-specific satellite filtering, and live ISS video feed.
@@ -81,4 +81,4 @@ async function fetchSatData(noradId) {
 
 1. As I deepen my knowledge of **JavaScript**, the above-mentioned issues will be resolved as a first priority.  
 2. The system will then maintain a **real-time list of publicly trackable satellites** and ensure their accurate visualization on the map.  
-3. Once these improvements are implemented, **geographically unstable regions** will be defined as **“threat zones”**, and **cyber simulations** targeting satellites from these regions will be conducted.  
+3. Once these improvements are implemented, **geographically unstable regions** will be defined as **"threat zones"**, and **cyber-attack simulations** targeting satellites from these regions will be conducted.  
