@@ -81,4 +81,4 @@ async function fetchSatData(noradId) {
 
 1. As I deepen my knowledge of **JavaScript**, the above-mentioned issues will be resolved as a first priority.  
 2. The system will then maintain a **real-time list of publicly trackable satellites** and ensure their accurate visualization on the map.  
-3. Once these improvements are implemented, **geographically unstable regions** will be defined as **“threat zones”**, and **cyber-attack simulations** targeting satellites from these regions will be conducted.  
+3. Once these improvements are implemented, **geographically unstable regions** will be defined as **“threat zones”**, and **cyber simulations** targeting satellites from these regions will be conducted.  
