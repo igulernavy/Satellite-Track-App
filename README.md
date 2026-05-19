@@ -94,9 +94,21 @@ Then open `http://localhost:8765` in your browser.
 
 ---
 
-## Future Work
+## 🚧 Next Steps / Future Work
 
-1. Add orbital path prediction (TLE-based propagation with satellite.js)
-2. Expand satellite catalog with live TLE feeds from Celestrak
-3. Define geographically unstable regions as **threat zones** for cybersecurity simulation scenarios
-4. Mobile-responsive layout improvements
+### Phase 1 — Core Tracking Improvements
+1. **TLE-based orbital path prediction** — Integrate `satellite.js` to propagate real Two-Line Element (TLE) data and draw accurate future orbital paths on the map
+2. **Live satellite catalog** — Pull publicly trackable satellites automatically from [Celestrak](https://celestrak.org) TLE feeds, replacing the static `SATS_BY_COUNTRY` list
+3. **Real-time position accuracy** — Switch from demo-mode interpolation to full N2YO API integration for all satellites, with automatic refresh every 15 seconds
+
+### Phase 2 — Visualization Enhancements
+4. **Ground track projection** — Show the satellite's ground track (future path over Earth's surface) as a dashed line on the map
+5. **Pass prediction panel** — Display upcoming overhead passes for the user's location with rise/set times and max elevation
+6. **3D globe view** — Optional Cesium.js integration for a 3D Earth rendering with satellite orbits in full 3D space
+7. **Mobile layout** — Fully responsive design for smartphone and tablet screens
+
+### Phase 3 — Cybersecurity & Threat Simulation
+8. **Threat zone definition** — Geographically unstable or adversarial regions will be outlined on the map as **"threat zones"** with visual indicators
+9. **Cyber-attack simulation** — Simulated attack vectors (signal jamming, spoofing, command injection) will be modeled against satellites passing through threat zones
+10. **Vulnerability scoring** — Each satellite will receive a dynamic risk score based on orbit type, operator country, and proximity to threat zones
+11. **Incident timeline** — A log panel showing simulated cyber events, timestamps, and affected satellites in real time
