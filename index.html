@@ -55,16 +55,12 @@
       </div>
       <div id="tab-iss" class="tabpane">
         <div class="card">
-          <h3>📺 NASA — ISS Live Camera</h3>
-          <div class="youtube">
-            <iframe id="ytFrame" src="" title="ISS Live"
-              frameborder="0" allow="autoplay; encrypted-media; picture-in-picture"
-              allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
-          </div>
+          <h3>📡 ISS — Live Telemetry</h3>
           <div id="issData"></div>
-          <small class="muted">
-            Browsers block autoplay with sound; click once to unmute.
-          </small>
+          <a id="issLiveBtn" href="https://www.youtube.com/watch?v=uwXgcTc8oY8"
+             target="_blank" rel="noopener">
+            ▶ Watch ISS Live Camera on NASA YouTube
+          </a>
         </div>
       </div>
     </aside>
@@ -80,7 +76,7 @@
     <small class="muted"></small>
   </div>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet.terminator/dist/leaflet.terminator.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet.terminator@0.1.0/L.Terminator.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

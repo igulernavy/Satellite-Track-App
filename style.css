@@ -211,11 +211,21 @@ html, body {
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
 }
 
-.youtube iframe {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  border: 0;
+#issLiveBtn {
+  display: block;
+  margin-top: 14px;
+  padding: 12px 16px;
+  background: #c00;
+  color: #fff;
+  text-decoration: none;
   border-radius: 10px;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.3px;
+  transition: background 0.2s;
+}
+#issLiveBtn:hover {
+  background: #e00;
 }
 
 .muted {

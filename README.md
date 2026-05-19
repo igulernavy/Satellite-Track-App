@@ -37,7 +37,7 @@ async function fetchSatData(noradId) {
   const PROXY_URL = 'https://corsproxy.io/?';
   const targetURL = `https://api.n2yo.com/rest/v1/satellite/positions/${noradId}/${OBS_LAT}/${OBS_LON}/0/1/?apiKey=${API_KEY}`;
   const res = await fetch(PROXY_URL + targetURL);
-  // Handle response...
+  
 }
 ```
 

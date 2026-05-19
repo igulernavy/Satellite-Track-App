@@ -42,8 +42,8 @@ const bgm = document.getElementById('bgm');
 const muteBtn = document.getElementById('muteBtn');
 const issData = document.getElementById('issData');
 
-const YT_LIVE_ID = 'iYmvCUonukw';
-document.getElementById('ytFrame').src = `https://www.youtube.com/embed/${YT_LIVE_ID}?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1&playsinline=1`;
+// NASA ISS live stream — opened in new tab (embedding disabled by NASA)
+const ISS_LIVE_URL = 'https://www.youtube.com/watch?v=uwXgcTc8oY8';
 
 let userInteracted = false;
 // Background music play on first click
@@ -110,7 +110,7 @@ countrySelect.addEventListener('change', () => renderList(countrySelect.value));
 searchBox.addEventListener('input', () => renderList(countrySelect.value));
 renderList(countrySelect.value);
 
-const API_KEY = ''; // N2YO API KEY : 4639PR-YA423R-EZY4BF-5LFC
+const API_KEY = '4639PR-YA423R-EZY4BF-5LFC';
 let demoMode = !API_KEY;
 const OBS_LAT = 47.3769;
 const OBS_LON = 8.5417;
@@ -122,18 +122,27 @@ L.tileLayer(
   { attribution: '&copy; OpenStreetMap contributors' }
 ).addTo(map);
 
-// ISS icon URL
-const issIconUrl = '/Users/sirius/Library/Mobile Documents/com~apple~CloudDocs/1 - Ilker/01 - Academics/2 - My_Powercoders/5 - CH2025-2/Satellite Track/iss.png';
+// Night/day terminator — shows the real-time shadow of Earth's dark side
+let terminator = null;
+try {
+  terminator = L.terminator({ fillOpacity: 0.25, color: '#001133' }).addTo(map);
+  setInterval(() => terminator.setTime(new Date()), 60000);
+} catch (e) {
+  console.warn('Terminator plugin not available:', e.message);
+}
+
+// ISS icon — relative path so it works on any machine
 const issIcon = L.icon({
-  iconUrl: issIconUrl,
-  iconSize: [32, 32],      // İkon boyutu
-  iconAnchor: [16, 16],    // İkon koordinatın ortasında olmalı
+  iconUrl: 'iss.png',
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
   popupAnchor: [0, -16]
 });
+
 // ISS marker, path and trail
 let issMarker, issPath;
 let issTrail = [];
-let followISS = true; // Whether map auto-follows ISS position
+let followISS = true;
 
 // Follow ISS toggle button
 const followBtn = document.createElement('button');
@@ -150,139 +159,136 @@ followBtn.addEventListener('click', () => {
   followBtn.textContent = followISS ? '🛰️ Following ISS' : '🛰️ Follow ISS';
 });
 
-// Update the ISS orbit with custom icon and trail, update map view if followISS is true
-async function updateISSOrbit() {
+// Single function: fetch ISS data from wheretheiss.at, update both marker and info panel
+// open-notify.org is deprecated — wheretheiss.at provides all needed fields
+async function updateISS() {
   try {
-    const res = await fetch('https://api.open-notify.org/iss-now.json');
-    const data = await res.json();
-    const lat = parseFloat(data.iss_position.latitude);
-    const lon = parseFloat(data.iss_position.longitude);
+    const res  = await fetch('https://api.wheretheiss.at/v1/satellites/25544');
+    const info = await res.json();
+    const lat  = parseFloat(info.latitude);
+    const lon  = parseFloat(info.longitude);
 
-    const issIconUrl = '/Users/sirius/Library/Mobile Documents/com~apple~CloudDocs/1 - Ilker/01 - Academics/2 - My_Powercoders/5 - CH2025-2/Satellite Track/iss.png';
-let issIcon = L.icon({
-  iconUrl: issIconUrl,
-  iconSize: [32, 32],
-  iconAnchor: [16, 16],
-  popupAnchor: [0, -16],
-});
-
-async function updateISSOrbit() {
-  try {
-    const res = await fetch('https://api.open-notify.org/iss-now.json');
-    const data = await res.json();
-    const lat = parseFloat(data.iss_position.latitude);
-    const lon = parseFloat(data.iss_position.longitude);
-
+    // Update or create marker on map
     if (!issMarker) {
       issMarker = L.marker([lat, lon], { icon: issIcon }).addTo(map);
-      issPath = L.polyline([], { color: '#ffd700', weight: 3, opacity: 0.8 }).addTo(map);
+      issPath   = L.polyline([], { color: '#ffd700', weight: 3, opacity: 0.8 }).addTo(map);
     } else {
       issMarker.setLatLng([lat, lon]);
     }
 
     issTrail.push([lat, lon]);
-    if (issTrail.length > 100) issTrail.shift();
+    if (issTrail.length > 120) issTrail.shift();
     issPath.setLatLngs(issTrail);
 
-    if (followISS) {
-      map.setView([lat, lon], map.getZoom());
-    }
+    if (followISS) map.setView([lat, lon], map.getZoom());
 
-  } catch (e) {
-    console.error('ISS update error:', e);
-  }
-}
-
-
-    issTrail.push([lat, lon]);
-    if (issTrail.length > 100) issTrail.shift();
-    issPath.setLatLngs(issTrail);
-
-    if (followISS) {
-      map.setView([lat, lon], map.getZoom());
-    }
+    // Update info panel
+    issData.innerHTML = `
+      <hr>
+      <div><b>Altitude:</b> ${info.altitude.toFixed(1)} km</div>
+      <div><b>Latitude:</b> ${lat.toFixed(2)}</div>
+      <div><b>Longitude:</b> ${lon.toFixed(2)}</div>
+      <div><b>Velocity:</b> ${info.velocity.toFixed(2)} km/s</div>
+      <div><b>Visibility:</b> ${info.visibility}</div>
+    `;
   } catch (err) {
     console.error('ISS update error:', err);
   }
 }
 
-// Fetch ISS data and update info panel
-async function fetchISSData() {
-  try {
-    const res = await fetch('https://api.wheretheiss.at/v1/satellites/25544');
-    const info = await res.json();
-    issData.innerHTML = `
-      <hr>
-      <div><b>Altitude:</b> ${info.altitude.toFixed(1)} km</div>
-      <div><b>Latitude:</b> ${info.latitude.toFixed(2)}</div>
-      <div><b>Longitude:</b> ${info.longitude.toFixed(2)}</div>
-      <div><b>Velocity:</b> ${info.velocity.toFixed(2)} km/s</div>
-      <div><b>Visibility:</b> ${info.visibility}</div>
-    `;
-  } catch (err) {
-    console.warn('ISS data fetch error:', err);
-  }
+setInterval(updateISS, 5000);
+updateISS();
+
+// Demo position: spread satellites across the globe based on NORAD ID
+function demoPosition(noradId) {
+  const t = Date.now() / 10000 + noradId;
+  return {
+    satlatitude:  35 * Math.sin(t / 8 + noradId % 6),
+    satlongitude: ((noradId * 137.5) % 360) - 180,
+    sataltitude:  400 + (noradId % 200),
+    satvelocity:  7.6
+  };
 }
 
-setInterval(updateISSOrbit, 5000);
-setInterval(fetchISSData, 10000);
-updateISSOrbit();
-fetchISSData();
-
-// Fetch satellite data either demo or real API
+// Fetch real satellite position with 4s timeout; fall back to demo if API fails
 async function fetchSatData(noradId) {
-  try {
-    if (demoMode) {
-      const t = Date.now() / 10000 + noradId;
-      const lat = 15 * Math.sin(t / 10);
-      const lon = (t % 360) - 180;
-      return { satlatitude: lat, satlongitude: lon, sataltitude: 400, satvelocity: 7.6 };
+  if (!demoMode) {
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 4000);
+      const PROXY_URL = 'https://corsproxy.io/?';
+      const targetURL = `https://api.n2yo.com/rest/v1/satellite/positions/${noradId}/${OBS_LAT}/${OBS_LON}/0/1/?apiKey=${API_KEY}`;
+      const res  = await fetch(PROXY_URL + targetURL, { signal: ctrl.signal });
+      clearTimeout(timer);
+      const json = await res.json();
+      if (json.positions?.length) return json.positions[0];
+    } catch (err) {
+      console.warn(`N2YO failed for NORAD ${noradId} — using demo position`);
     }
-    const PROXY_URL = 'https://corsproxy.io/?';
-    const targetURL = `https://api.n2yo.com/rest/v1/satellite/positions/${noradId}/${OBS_LAT}/${OBS_LON}/0/1/?apiKey=${API_KEY}`;
-    const res = await fetch(PROXY_URL + targetURL);
-    const json = await res.json();
-    if (!json.positions?.length) return null;
-    return json.positions[0];
-  } catch (err) {
-    console.error('fetchSatData error:', err);
-    return null;
   }
+  return demoPosition(noradId);
 }
 
-// Update all satellite markers excluding ISS (which has special handling)
-let allSatObjs = [];
-async function updateSatMarkers() {
-  allSatObjs.forEach(s => {
-    if (s.marker) map.removeLayer(s.marker);
-    if (s.path) map.removeLayer(s.path);
-  });
-  allSatObjs = Object.values(SATS_BY_COUNTRY)
-    .flat()
-    .filter(s => !s.name.toUpperCase().includes('ISS'));
+// Build satellite list once — markers and trails persist across updates
+const allSatObjs = Object.values(SATS_BY_COUNTRY)
+  .flat()
+  .filter(s => !s.name.toUpperCase().includes('ISS'));
 
+function makeSatIcon(orbit) {
+  const color = orbit === 'GEO' ? '#f59e0b' : orbit === 'MEO' ? '#a78bfa' : '#38bdf8';
+  const glow  = orbit === 'GEO' ? '#fbbf24' : orbit === 'MEO' ? '#8b5cf6' : '#22d3ee';
+  return L.divIcon({
+    className: 'sat-icon',
+    html: `<div style="width:12px;height:12px;background:${color};border-radius:50%;
+                box-shadow:0 0 8px ${glow};border:1px solid rgba(255,255,255,0.4);"></div>`,
+    iconSize:   [12, 12],
+    iconAnchor: [6, 6],
+  });
+}
+
+// Place all markers instantly with demo positions — no API wait on load
+function initSatMarkers() {
   for (const s of allSatObjs) {
-    const pos = await fetchSatData(s.norad);
-    if (!pos) continue;
-    const icon = L.divIcon({
-      className: 'sat-icon',
-      html: '<div style="width:9px;height:9px;background:#38bdf8;border-radius:50%;box-shadow:0 0 6px #22d3ee;"></div>',
-      iconSize: [9, 9],
-    });
-    s.marker = L.marker([pos.satlatitude, pos.satlongitude], { icon }).addTo(map);
-    s.path = L.polyline([], { color: '#22d3ee', weight: 1.3, opacity: 0.8 }).addTo(map);
-    s.trail = [[pos.satlatitude, pos.satlongitude]];
+    s.trail = [];
+    for (let i = 20; i >= 1; i--) {
+      const t = (Date.now() - i * 15000) / 10000 + s.norad;
+      s.trail.push([
+        35 * Math.sin(t / 8 + s.norad % 6),
+        ((s.norad * 137.5 + i * 3) % 360) - 180
+      ]);
+    }
+    const demo = demoPosition(s.norad);
+    s.trail.push([demo.satlatitude, demo.satlongitude]);
+
+    s.marker = L.marker([demo.satlatitude, demo.satlongitude], { icon: makeSatIcon(s.orbit) }).addTo(map);
+    s.path   = L.polyline(s.trail, { color: '#22d3ee', weight: 1.5, opacity: 0.85 }).addTo(map);
+    s.marker.bindTooltip(s.name, { permanent: false, direction: 'top', offset: [0, -8] });
     s.marker.on('click', () => openCard(s));
   }
 }
+
+// Every 15s: update each satellite's position and extend its trail
+async function updateSatMarkers() {
+  for (const s of allSatObjs) {
+    if (!s.marker) continue;
+    const pos = await fetchSatData(s.norad);
+    if (!pos) continue;
+    const latlng = [pos.satlatitude, pos.satlongitude];
+    s.marker.setLatLng(latlng);
+    s.trail.push(latlng);
+    if (s.trail.length > 60) s.trail.shift();
+    s.path.setLatLngs(s.trail);
+  }
+}
+
+initSatMarkers();
 setInterval(updateSatMarkers, 15000);
-updateSatMarkers();
 
 // Opens satellite info card with detailed data
 function openCard(s) {
   if (s.name.toUpperCase().includes('ISS')) {
     document.querySelector('[data-tab="tab-iss"]').click();
-    fetchISSData();
+    updateISS();
     return;
   }
   fetchSatData(s.norad).then(pos => {
@@ -291,10 +297,10 @@ function openCard(s) {
       <h3>${s.name} <span class="tag">${s.operator}</span></h3>
       <div><b>NORAD ID:</b> ${s.norad}</div>
       <div><b>Orbit:</b> ${s.orbit}</div>
-      <div><b>Altitude:</b> ${pos.sataltitude.toFixed(1)} km</div>
-      <div><b>Latitude:</b> ${pos.satlatitude.toFixed(2)}</div>
-      <div><b>Longitude:</b> ${pos.satlongitude.toFixed(2)}</div>
-      <div><b>Speed:</b> ${pos.satvelocity.toFixed(2)} km/s</div>
+      <div><b>Altitude:</b> ${pos.sataltitude?.toFixed(1) ?? '—'} km</div>
+      <div><b>Latitude:</b> ${pos.satlatitude?.toFixed(2) ?? '—'}</div>
+      <div><b>Longitude:</b> ${pos.satlongitude?.toFixed(2) ?? '—'}</div>
+      <div><b>Speed:</b> ${pos.satvelocity?.toFixed(2) ?? '—'} km/s</div>
     `;
   });
 }
